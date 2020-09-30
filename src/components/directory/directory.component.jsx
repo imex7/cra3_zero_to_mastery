@@ -43,9 +43,8 @@ export default class extends React.Component {
 		return <>
 			<div className="directory-menu">
 				{
-					this.state.sections.map((el) => {
-						return <MenuItem title={el.title.toUpperCase()} 
-							imageUrl={el.imageUrl} key={el.id} size={el.size} />
+					this.state.sections.map(({id, ...otherProps}) => {
+						return <MenuItem key={id} {...otherProps} />
 					})
 				}
 			</div>
