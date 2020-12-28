@@ -27,6 +27,9 @@ const HatsDetailsPage = ({history, match: {params, url}}) => {
     <p>
       {params.shapka}
     </p>
+    <p>
+      {params.ushanka}
+    </p>
   </>
 }
 
@@ -61,11 +64,11 @@ class App extends React.Component {
       <Header />
         <Switch>
           <Route exact path='/' component={HomePage} />
-          <Route exact path='/shop' component={ShopPage} />
+          <Route path='/shop' component={ShopPage} />
           <Route exact path='/checkout' component={CheckoutPage} />
           <Route exact path='/signin' render={() => this.props.currentUser ? (<Redirect to='/' />) : (<SignInAndSignUpPage/>) } />
           <Route exact path='/hats' component={HatsPage} />
-          <Route path='/hats/:shapka/:ushanka' component={HatsDetailsPage} />
+          <Route path='/rats/:shapka/:ushanka' component={HatsDetailsPage} />
         </Switch>
     </>
   }

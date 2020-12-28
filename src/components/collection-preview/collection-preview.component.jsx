@@ -6,7 +6,7 @@ export default function CollectionPreview({title, items}) {
 	return <>
 	<div className="collection-preview">
 		<h2 className="title">{title}</h2>
-		<div className="preview">
+		<div className="items">
 			{
 				items
 					.filter((el, index) => {
