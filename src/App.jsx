@@ -4,6 +4,7 @@ import { Route, Switch, Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { selectCurrentUser } from './redux/user/user.selectors';
+import { selectCollectionsForPreview } from './redux/shop/shop.selectors';
 import { setCurrentUserAction } from './redux/user/user.actions';
 
 import HomePage from './pages/homepage/homepage.component';
@@ -11,7 +12,7 @@ import CheckoutPage from './pages/checkout/checkout.component';
 import ShopPage from './pages/shop/shop.component';
 import SignInAndSignUpPage from './pages/signin-and-signup-page/signin-and-signup-page.component';
 import Header from './components/header/header.component';
-import { auth, createUserProfileDocument } from './firebase/firebase.utils';
+import { auth, createUserProfileDocument, addCollectionAndDocuments } from './firebase/firebase.utils';
 
 const HatsPage = ({history, match}) => {
   return <>
@@ -38,7 +39,7 @@ class App extends React.Component {
   unsubscribeFromAuth = null
 
   componentDidMount() {
-    const {setCurrentUser} = this.props
+    const {setCurrentUser, collectionsArray} = this.props
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async (user) => {
       if (user) {
         const ref = await createUserProfileDocument(user)
@@ -47,11 +48,15 @@ class App extends React.Component {
             id: snapshot.id,
             ...snapshot.data()
             })
-            console.log(snapshot);
         })
-      } else {
-        setCurrentUser(user)
       }
+      setCurrentUser(user)
+      let toOnceAddToFirestore = collectionsArray.map(({title, items}) => {
+        return {
+          title, items
+        }
+      })
+      addCollectionAndDocuments('Collections', toOnceAddToFirestore)
     })
   }
 
@@ -75,7 +80,8 @@ class App extends React.Component {
 }
 
 const mapStateToProps = createStructuredSelector({
-  currentUser: selectCurrentUser
+  currentUser: selectCurrentUser,
+  collectionsArray: selectCollectionsForPreview
 })
 
 const mapDispatchToProps = (dispatch) => ({

@@ -15,11 +15,9 @@ const config = {
 firebase.initializeApp(config)
 
 export const createUserProfileDocument = async (userAuth, additionalData) => {
-
 	if (!userAuth) return;
 	const ref = firestore.doc(`users/${userAuth.uid}`)
 	const snapshot = await ref.get()
-
 	if (!snapshot.exists) {
 		const {displayName, email} = userAuth
 		const createdAt = new Date()
@@ -37,14 +35,49 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
 	return ref
 }
 
+export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => {
+	// const collRef = firestore.collection(collectionKey)
+	// const batch = firestore.batch()
+	// objectsToAdd.forEach((el) => {
+	// 	const newDocRef = collRef.doc()
+	// 	console.log(newDocRef.id);
+	// 	batch.set(newDocRef, el)
+	// })
+
+	// let b = await batch.commit()
+	// return b
+}
+
+export const convertCollectionsSnapshotToMap = (colls) => {
+	// console.log(colls);
+	const transformedColl = colls.docs.map((el) => {
+		const { title, items } = el.data()
+		return {
+			routeName: encodeURI(title.toLowerCase()),
+			id: el.id,
+			title,
+			items
+		}
+	})
+	console.log(transformedColl)
+	const tc = transformedColl.reduce((accum, coll) => {
+		accum[coll.title.toLowerCase()] = coll
+		return accum
+	}, {})
+	console.log(tc);
+	return tc
+}
+
 export const auth = firebase.auth()
+auth.languageCode = 'ua'
+
 export const firestore = firebase.firestore()
 
 const provider = new firebase.auth.GoogleAuthProvider()
 provider.setCustomParameters({prompt: 'select_account'})
 
-export const signUpWithGoogle = () => {
-	return auth.signInWithPopup(provider)
+export const signInWithGoogle = () => {
+	return firebase.auth().signInWithPopup(provider)
 }
 
 export default firebase;

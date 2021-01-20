@@ -6,21 +6,18 @@ import { auth, createUserProfileDocument } from '../../firebase/firebase.utils';
 
 export class SignUp extends React.Component {
 
-	constructor() {
-		super()
-		this.state = {
-			displayName: '',
-			email: '',
-			password: '',
-			confirmPassword: ''
-		}
+	state = {
+		displayName: '',
+		email: '',
+		password: '',
+		confirmPassword: ''
 	}
 
 	handleSubmit = async (e) => {
 		e.preventDefault()
 		const { displayName, email, password, confirmPassword } = this.state
 		if (password !== confirmPassword) {
-			alert("Passwords don`t match!")
+			alert("Пароли не совпадают")
 			return
 		}
 		try {
