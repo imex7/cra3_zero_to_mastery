@@ -30,3 +30,17 @@ export const selectCollection = (collectionUrlParam) => {
 		}
 	)
 }
+
+export const selectIsCollectionFetching = createSelector(
+	[selectShop],
+	(shop) => {
+		return shop.isFetching
+	}
+)
+
+export const selectIsCollectionsLoaded = createSelector(
+	[selectShop],
+	(shop) => {
+		return !!shop.collections
+	}
+)
