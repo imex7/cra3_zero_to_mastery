@@ -1,10 +1,12 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import './sign-in.styles.scss';
 import { FormInput } from '../form-input/form-input.component';
 import { CustomButton } from '../custom-button/custom-button.component';
-import { auth, signInWithGoogle } from '../../firebase/firebase.utils';
+// import { auth, signInWithGoogle } from '../../firebase/firebase.utils';
+import { googleSignInStart, emailSignInStart } from '../../redux/user/user.actions';
 
-export class SignIn extends React.Component {
+class SignIn extends React.Component {
 	
 	state = {
 		email: '',
@@ -13,18 +15,18 @@ export class SignIn extends React.Component {
 
 	handleSubmit = async (e) => {
 		e.preventDefault()
+		const {emailSignInStart} = this.props
 		const {email, password} = this.state
-		try {
-			let res = await auth.signInWithEmailAndPassword(email, password)
-			console.log('CREDENTIALS');
-			console.log(res.user);
-			this.setState({
-				email: '',
-				password: ''
-			})
-		} catch (error) {
-			console.log(error);
-		}
+		emailSignInStart(email, password)
+		// try {
+		// 	let res = await auth.signInWithEmailAndPassword(email, password)
+		// 	this.setState({
+		// 		email: '',
+		// 		password: ''
+		// 	})
+		// } catch (error) {
+		// 	console.log(error);
+		// }
 	}
 
 	handleChange = (e) => {
@@ -35,6 +37,7 @@ export class SignIn extends React.Component {
 	}
 
 	render() {
+		const {googleSignInStart} = this.props
 		return <div className="sign-in">
 			<h2>I already have an account</h2>
 			<span>Sign in with your email and password</span>
@@ -46,12 +49,21 @@ export class SignIn extends React.Component {
 
 				<div className="buttons">
 					<CustomButton type="submit" caption="Sign In" />
-					<CustomButton type="submit" caption="Sign In with Google"
+					<CustomButton caption="Sign In with Google"
 						isGoogleSignIn
-						onClick={signInWithGoogle}	/>
+						onClick={googleSignInStart}	/>
 				</div>
 				
 			</form>
 		</div>
 	}
 }
+
+const mdp = (dispatch) => {
+	return {
+		googleSignInStart: () => dispatch(googleSignInStart()),
+		emailSignInStart: (email, password) => dispatch(emailSignInStart({ email, password}))
+	}
+}
+
+export default connect(null, mdp)(SignIn)

@@ -68,16 +68,25 @@ export const convertCollectionsSnapshotToMap = (colls) => {
 	return tc
 }
 
+export const getCurrentUser = () => {
+	return new Promise((res, rej) => {
+		const unsubscribe = auth.onAuthStateChanged((userAuth) => {
+			unsubscribe()
+			res(userAuth)
+		}, rej)
+	})
+}
+
 export const auth = firebase.auth()
 auth.languageCode = 'ua'
 
 export const firestore = firebase.firestore()
 
-const provider = new firebase.auth.GoogleAuthProvider()
-provider.setCustomParameters({prompt: 'select_account'})
+export const googleProvider = new firebase.auth.GoogleAuthProvider()
+googleProvider.setCustomParameters({prompt: 'select_account'})
 
 export const signInWithGoogle = () => {
-	return firebase.auth().signInWithPopup(provider)
+	return firebase.auth().signInWithPopup(googleProvider)
 }
 
 export default firebase;

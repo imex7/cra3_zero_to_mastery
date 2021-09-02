@@ -1,48 +1,41 @@
 /*eslint-disable*/
 import React from 'react';
 import { Route } from 'react-router-dom';
-import { createStructuredSelector } from 'reselect'
 import { connect } from 'react-redux'
-import { fetchCollectionsStartAsync } from '../../redux/shop/shop.actions'
-import { selectIsCollectionFetching, selectIsCollectionsLoaded } from '../../redux/shop/shop.selectors'
-import CollectionsOverview from '../../components/collections-overview/collections-overview.component';
-import CollectionPage from '../collection/collection.component';
-import WithSpinner from '../../components/with-spinner/with-spinner.component'
-const CollectionsOverviewWithSpinner = WithSpinner(CollectionsOverview)
-const CollectionPageWithSpinner = WithSpinner(CollectionPage)
+import { fetchCollectionsStart } from '../../redux/shop/shop.actions'
+import CollectionsOverviewContaner from '../../components/collections-overview/collections-overview.container';
+import CollectionsPageContainer from '../collection/collection.container';
 
 class ShopPage extends React.Component {
 	componentDidMount() {
-		const {fetchCollectionsStartAsync} = this.props
-		fetchCollectionsStartAsync()
+		const {fetchCollectionsStart} = this.props
+		fetchCollectionsStart()
 	}
 	render() {
-		const {match, isCollectionFetching, isCollectionLoaded} = this.props
+		const {match} = this.props
 		return <>
 			<div className="shop-page">
 				<h2>Shop page</h2>
-					<Route exact path={`${match.path}`}
-						render={(props) => <CollectionsOverviewWithSpinner isLoading={isCollectionFetching}
-						{...props} />} />
-					<Route path={`${match.path}/:collectionId`} 
-						render={(props) => <CollectionPageWithSpinner isLoading={!isCollectionLoaded}
-						{...props} />} />
+					<Route
+						exact
+						path={`${match.path}`}
+						component={CollectionsOverviewContaner}
+					/>
+					<Route
+						path={`${match.path}/:collectionId`} 
+						component={CollectionsPageContainer}
+					/>
 			</div>
 		</>
 	}
 }
 
-const msp = createStructuredSelector({
-	isCollectionFetching: selectIsCollectionFetching,
-	isCollectionLoaded: selectIsCollectionsLoaded
-})
-
 const mdp = (dispatch) => {
 	return {
-		fetchCollectionsStartAsync: () => {
-			return dispatch(fetchCollectionsStartAsync())
+		fetchCollectionsStart: () => {
+			return dispatch(fetchCollectionsStart())
 		}
 	}
 }
 
-export default connect(msp, mdp)(ShopPage);
+export default connect(null, mdp)(ShopPage);

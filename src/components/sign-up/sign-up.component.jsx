@@ -1,10 +1,12 @@
 import React from 'react';
+import { connect } from 'react-redux'
 import './sign-up.styles.scss'
 import {FormInput} from '../form-input/form-input.component';
 import {CustomButton} from '../custom-button/custom-button.component';
-import { auth, createUserProfileDocument } from '../../firebase/firebase.utils';
+import { signUpStart } from '../../redux/user/user.actions'
+// import { auth, createUserProfileDocument } from '../../firebase/firebase.utils';
 
-export class SignUp extends React.Component {
+class SignUp extends React.Component {
 
 	state = {
 		displayName: '',
@@ -15,23 +17,25 @@ export class SignUp extends React.Component {
 
 	handleSubmit = async (e) => {
 		e.preventDefault()
+		const { signUpStart } = this.props
 		const { displayName, email, password, confirmPassword } = this.state
 		if (password !== confirmPassword) {
 			alert("Пароли не совпадают")
 			return
 		}
-		try {
-			const {user} = await auth.createUserWithEmailAndPassword(email, password)
-			await createUserProfileDocument(user, {displayName})
-			this.setState({
-				displayName: '',
-				email: '',
-				password: '',
-				confirmPassword: ''
-			})
-		} catch (error) {
-			console.log(error);
-		}
+		signUpStart({ displayName, email, password })
+		// try {
+		// 	const {user} = await auth.createUserWithEmailAndPassword(email, password)
+		// 	await createUserProfileDocument(user, {displayName})
+		// 	this.setState({
+		// 		displayName: '',
+		// 		email: '',
+		// 		password: '',
+		// 		confirmPassword: ''
+		// 	})
+		// } catch (error) {
+		// 	console.log(error);
+		// }
 	}
 
 	handleChange = (e) => {
@@ -61,3 +65,11 @@ export class SignUp extends React.Component {
 	}
 
 }
+
+const mdp = (dispatch) => {
+	return {
+		signUpStart: userCredentials => dispatch(signUpStart(userCredentials))
+	}
+}
+
+export default connect(null, mdp)(SignUp)

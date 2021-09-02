@@ -12,8 +12,9 @@ import { selectCurrentUser } from '../../redux/user/user.selectors';
 import CartIcon from '../cart-icon/cart-icon.component.jsx';
 import CartDropdown from '../cart-dropdown/cart-dropdown.component';
 import {HeaderContainer, LogoContainer, OptionLink, OptionsContainer} from "./header.styles"
+import { signOutStart } from '../../redux/user/user.actions'
 
-function Header({currentUser, hidden}) {
+function Header({currentUser, hidden, signOutStart}) {
 	let history = useHistory();
 	return <>
 		<HeaderContainer>
@@ -28,11 +29,16 @@ function Header({currentUser, hidden}) {
 						? <OptionLink
 								as='div'
 								className="option"
-								onClick={() => { auth.signOut().then(() => {history.push('/')}); }}
+								onClick={signOutStart}
 							>
 								SIGNOUT
 							</OptionLink>
-						: <OptionLink className="option" to="/signin">SIGN IN</OptionLink>
+						: <OptionLink 
+								className="option"
+								to="/signin"
+							>
+								SIGN IN
+							</OptionLink>
 				}
 				<CartIcon />
 			</OptionsContainer>
@@ -49,4 +55,8 @@ const msp = createStructuredSelector({
 	hidden: selectCartHidden
 })
 
-export default connect(msp)(Header)
+const mdp = (dispatch) => ({
+	signOutStart: () => dispatch(signOutStart())
+})
+
+export default connect(msp, mdp)(Header)
